@@ -1,0 +1,102 @@
+O maven é uma ferramenta de gerencialmente de ciclo de Build. Ou seja ele faz a automação de Build.
+O maven compila, executa testes, gerencia dependências e empacota a aplicação.
+
+O maven necessita de uma váriavel chamada JAVA_HOME
+
+Compila no mesmo diretório
+Ex.
+javac *.java
+javac calculadora.java Utils.java
+
+Compila a classe calculadora.java que está no pacote src e compila no pacote target.
+Ex.
+javac -sourcepath src -d target src/calculadora.java
+obs. -D significa "define"
+
+Compila a classe calculadora.java que está no pacote src e compila no pacote target utilizando as bibliotecas mencionadas.
+Ex.
+javac -sourcepath src -d target -cp lib/xtream-1.4.8.jar src/calculadora.java
+
+
+Criar um novo projeto
+Ex.
+mvn archetype:generate -DartifactId=produtos -DgroupId=org.diogobarbosa -DinteractiveMode=false -DarchetypeArtifactId=maven-archetype-quickstart
+
+mvn archetype:generate -DartifactId=produtos -DgroupId=org.diogobarbosa -DinteractiveMode=false -DarchetypeArtifactId=maven-archetype-webapp
+
+Website onde podemos procurar as dependências do maven desejadas.
+http://mvnrepository.com
+
+Repositório central remoto do maven.
+http://repo.maven.apache.org/maven2
+
+Repositório local do maven.
+Em C:\Users\usuário\.m2\repository
+
+------------------------------------------------------------
+
+CICLO DE VIDA DO MAVEN
+validate - Valida se o projeto está ok, com tudo que precisa para funcionar.
+compile – compila o código fonte do projeto
+test – executa os testes unitários do código compilado, usando uma ferramenta de testes unitários, como o junit.
+package – empacota o código compilado de acordo com o empacotamento escolhido, por exemplo, em JAR. Os testes também são executados.
+integration-test – processa e faz o deploy do pacote em um ambiente onde os testes de integração podem ser rodados.
+verify - Executa testes de integração
+install – instala o pacote no repositório local, para ser usado como dependência de outros projetos locais
+deploy – feito em ambiente de integração ou de release, copia o pacote final para um repositório remoto para ser compartilhado entre desenvolvedores e projetos
+
+DEMAIS COMANDOS
+mvn clean: Remove a pasta target
+mvn surefire-report:report: Gera um relatório de testes em html
+-DskipTests=true: Desabilita a compilação e execução dos testes
+mvn pmd:pmd: Utiliza o PMD (Análisador de código) em busca de possíveis bugs e gera um relatório
+mvn pmd:check: Utiliza o PMD na fase de verify, e caso tenha erro, encerra a build.
+mvn dependency:tree: Mostra a arvore de dependências do projeto
+------------------------------------------------------------
+
+
+UTILIZANDO PLUGINS NO CICLO DE VIDA DO MAVEN
+	<build>
+		<!-- To define the plugin version in your parent POM -->
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.8</version>
+				<executions>
+					<execution>
+						<phase>verify</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+------------------------------------------------------------
+UTILIZANDO DEPENDÊNCIAS
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+
+
+ESCOPOS DE DEPENDÊNCIAS
+Compile (default): O pacote é considerado na compilação. Se houver empacotamento, a dependência é inclusa no pacote.
+
+Provided: O pacote é considerado na compilação, mas não é incluso no pacote se houver empacotamento.
+
+Import: Só funciona para dependências do tipo POM na parte <dependencyManagement> do seu arquivo pom.xml. Basicamente inclui todas as dependências contidas dentro do POM da dependência no seu POM.
+
+Runtime: Indica que a dependência não precisa estar na compilação, mas precisa estar na execução.
+
+Test: Indica que a dependência é usada apenas na fase de testes.
+
+System: Semelhante ao provided, mas para JARs. Os JARs precisam ser especificados explicitamente.
